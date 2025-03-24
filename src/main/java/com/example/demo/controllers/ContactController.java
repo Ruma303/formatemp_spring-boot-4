@@ -3,7 +3,12 @@ package com.example.demo.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,22 +18,37 @@ import com.example.demo.services.ContattoService;
 @RestController
 @RequestMapping("/api/contatti")
 public class ContactController {
-	
-	@GetMapping("/test")
-	public String test() {
-		return "ok";
+
+	private final ContattoService contattoService;
+
+	@Autowired
+	public ContactController(ContattoService contattoService) {
+		this.contattoService = contattoService;
 	}
 
-    private final ContattoService contattoService;
+	@GetMapping("/")
+	public List<Contatto> all() {
+		return contattoService.all();
+	}
 
-    @Autowired
-    public ContactController(ContattoService contattoService) {
-        this.contattoService = contattoService;
-    }
+	@GetMapping("/{id}")
+	public Contatto get(@PathVariable Long id) {
+		return contattoService.get(id);
+	}
 
-    @GetMapping("/")
-    public List<Contatto> all() {
-        List<Contatto> contatti = contattoService.all();
-        return contatti;
-    }
+	@PostMapping("/")
+	public Contatto create(@RequestBody Contatto contatto) {
+		return contattoService.create(contatto);
+	}
+
+	@PutMapping("/{id}")
+	public Contatto update(@RequestBody Contatto contatto, @PathVariable Long id) {
+		return contattoService.update(contatto, id);
+	}
+
+	@DeleteMapping("/{id}")
+	public String delete(@PathVariable Long id) {
+		contattoService.delete(id);
+		return "Contatto con id " + id + " eliminato correttamente.";
+	}
 }
